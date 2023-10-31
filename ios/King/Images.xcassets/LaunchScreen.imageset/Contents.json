@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "idiom": "plant_tiny.png",
+      "scale": "1x"
+    },
+    {
+      "idiom": "plant_tiny.png",
+      "scale": "2x"
+    },
+    {
+      "filename" : "plant_tiny.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -5,8 +5,10 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
+import SplashScreen from 'react-native-splash-screen';
+
 import {
   SafeAreaView,
   ScrollView,
@@ -61,6 +63,11 @@ function App(): JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  useEffect(() => {
+    console.info('[Init Page Mount]');
+    SplashScreen.hide();
+  }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>

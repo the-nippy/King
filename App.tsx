@@ -10,6 +10,7 @@ import type {PropsWithChildren} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 
 import {
+  // Dimensions,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -66,6 +67,8 @@ function App(): JSX.Element {
 
   useEffect(() => {
     console.info('[Init Page Mount]');
+    // const {width, height} = Dimensions.get('window');
+    // console.info('width, height', width, height);
     SplashScreen.hide();
   }, []);
 

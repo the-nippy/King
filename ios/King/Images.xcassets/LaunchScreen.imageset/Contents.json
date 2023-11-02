@@ -1,17 +1,25 @@
 {
   "images" : [
     {
-      "idiom": "plant_tiny.png",
-      "scale": "1x"
+      "idiom" : "universal",
+      "scale" : "1x"
     },
     {
-      "idiom": "plant_tiny.png",
-      "scale": "2x"
+      "idiom" : "universal",
+      "scale" : "2x"
     },
     {
       "filename" : "plant_tiny.png",
       "idiom" : "universal",
       "scale" : "3x"
+    },
+    {
+      "idiom" : "plant_tiny.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "plant_tiny.png",
+      "scale" : "2x"
     }
   ],
   "info" : {

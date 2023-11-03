@@ -1,11 +1,12 @@
 import React, {Component, useRef, useState} from 'react';
-import {View} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import Wheel from './Wheel';
+import ParallelTestData from './test_data/parallel.json';
 
 interface ISlidePickerProps {
   wheels: number;
   checkRange: 3 | 5 | 7;
-  data: [];
+  data: IWheelItemProps[][];
   itemHeight: number;
 }
 
@@ -18,29 +19,40 @@ class Parallel extends Component<ISlidePickerProps> {
   }
 
   render() {
-    const {wheels, checkRange, data, itemHeight} = this.props;
+    const {wheels = 2, checkRange, data, itemHeight} = this.props;
 
     return (
       <View>
-        {new Array(wheels).map((item, i) => {
-          return (
-            <Wheel
-              checkRange={checkRange}
-              wheelData={data[i]}
-              itemHeight={itemHeight}
-            />
-          );
-        })}
+        <Text>XXXX</Text>
+        <View style={styles.lists}>
+          {new Array(wheels).fill(1).map((wheel, i) => {
+            return (
+              <Wheel
+                key={i}
+                wheelItems={data[i]}
+                checkRange={checkRange}
+                itemHeight={itemHeight}
+              />
+            );
+          })}
+        </View>
       </View>
     );
   }
 }
 
 Parallel.defaultProps = {
-  wheels: 1,
-  checkRange: 3,
-  data: [],
+  wheels: 2,
+  checkRange: 5,
+  data: ParallelTestData,
   itemHeight: 50,
 };
+
+const styles = StyleSheet.create({
+  lists: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+});
 
 export default Parallel;

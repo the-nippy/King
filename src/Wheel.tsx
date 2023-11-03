@@ -5,98 +5,96 @@ import {
   Text,
   View,
   TouchableOpacity,
-  FlatListProps,
+  FlatListComponent,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: '0-',
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: '1111',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: '2222',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: '3333',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: '4444',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: '5555',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: '-0',
-  },
-];
+type TWheelProps = {
+  checkRange: number;
+  itemHeight: number;
+  wheelItems: IWheelItemProps[];
+};
 
-export default class Wheel extends Component {
-  listRef: React.RefObject<FlatListProps>;
+type TWheelState = {
+  checkedIndex: number;
+};
 
-  constructor(props) {
+type TEventHandler = NativeSyntheticEvent<NativeScrollEvent>;
+
+export default class Wheel extends Component<TWheelProps, TWheelState> {
+  listRef: React.RefObject<FlatListComponent<any, any>>;
+
+  state = {
+    checkedIndex: 0,
+  };
+
+  constructor(props: any) {
     super(props);
     this.listRef = React.createRef();
-
-    this.state = {
-      checked: [0],
-    };
   }
 
-  adjustScroll = ({nativeEvent}) => {
-    const {x, y} = nativeEvent.contentOffset;
-    console.info('yy', y);
-    // console.info('listRef', listRef);
+  adjustScroll = (event: TEventHandler) => {
+    const {y} = event.nativeEvent.contentOffset;
     const adjustY = Math.round(y / 60);
-    setCheck([adjustY + 1]);
-    this.listRef.scrollToIndex({
+    this.setState({checkedIndex: adjustY});
+    this.listRef?.current?.scrollToIndex({
       index: adjustY,
       animated: true,
+      viewPosition: 0.5,
     });
   };
 
-  renderItem = itemData => {
-    const [checked] = this.state;
+  renderItem = (itemData: {item: IWheelItemProps; index: number}) => {
+    const {checkedIndex} = this.state;
 
     const {item, index} = itemData;
     const itemStyle =
-      index === checked[0] ? {fontWeight: '700'} : {fontWeight: '400'};
+      index === checkedIndex ? {fontWeight: '700'} : {fontWeight: '400'};
     return (
       <TouchableOpacity style={[styles.item]}>
-        <Text style={[styles.title, itemStyle]}>{item.title}</Text>
+        <Text style={[styles.title, itemStyle]}>{item.label}</Text>
       </TouchableOpacity>
     );
   };
 
-  render(): React.ReactNode {
+  render() {
+    const {checkRange, itemHeight, wheelItems} = this.props;
+    console.info('[wheelItems]', wheelItems);
+
+    const fillCount = (checkRange - 1) / 2;
+
     return (
-      <View style={{height: 180}}>
+      <View style={{flex: 1, height: 60 * checkRange}}>
         <View
           style={{
             height: '100%',
             zIndex: 1,
           }}>
+          {/* <View style={styles.fakeItem} />
           <View style={styles.fakeItem} />
           <View style={styles.fakeItem} />
           <View style={styles.fakeItem} />
+
+          <View style={styles.fakeItem} /> */}
+
+          {new Array(checkRange).fill(1).map((ele, i) => (
+            <View style={styles.fakeItem} key={i} />
+          ))}
         </View>
         <View style={styles.maskList}>
           <FlatList
+            contentContainerStyle={{
+              paddingTop: fillCount * 60,
+              paddingBottom: fillCount * 60,
+            }}
             ref={this.listRef}
-            data={DATA}
+            data={wheelItems}
             renderItem={this.renderItem}
             onMomentumScrollEnd={this.adjustScroll}
             pinchGestureEnabled={false}
             // onScrollEndDrag={adjustScroll}
-            keyExtractor={data => data.title}
+            keyExtractor={data => data.id.toString()}
             showsVerticalScrollIndicator={false}
             // snapToAlignment={'start'}
             // snapToInterval={60}
@@ -125,7 +123,7 @@ const styles = StyleSheet.create({
   },
   fakeItem: {
     flex: 1,
-    backgroundColor: '#a00',
+    backgroundColor: '#eee',
     borderTopColor: 'rgba(0,0,0,0.2)',
     borderTopWidth: 1,
   },
@@ -134,7 +132,7 @@ const styles = StyleSheet.create({
   },
   maskList: {
     position: 'absolute',
-    width: '33%',
+    width: '100%',
     // backgroundColor: '#00a',
     top: 0,
     bottom: 0,

@@ -5,7 +5,7 @@
 import {AppRegistry} from 'react-native';
 // import App from './App';
 // import Picker from './src/Wheel.tsx';
-import Picker from './src/Parallel';
+import Demo from './src/example';
 import {name as appName} from './app.json';
 
-AppRegistry.registerComponent(appName, () => Picker);
+AppRegistry.registerComponent(appName, () => Demo);

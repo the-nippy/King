@@ -10,20 +10,36 @@ interface IParallelState {
 
 class PureParallel extends Component<SlidePickerType, IParallelState> {
   static defaultProps: SlidePickerType;
-
+  setMarkTimer: ReturnType<typeof setTimeout> | null;
+  cacheMarks: number[];
   constructor(props: any) {
     super(props);
     const {wheels} = this.props;
     this.state = {
       checkedIndexMarks: new Array(wheels).fill(0),
     };
+    this.setMarkTimer = null;
+    this.cacheMarks = [];
   }
 
+  componentWillUnmount(): void {
+    this.setMarkTimer && clearTimeout(this.setMarkTimer);
+  }
+
+  // setCheckMark = (locationMark: number, checkedIndex: number) => {
+  //   const indexMarks = [...this.state.checkedIndexMarks];
+  //   console.info('[slice indexMarks]', indexMarks);
+  //   indexMarks[locationMark] = checkedIndex;
+  //   console.info('[indexMarks]', indexMarks);
+  //   this.setState({checkedIndexMarks: indexMarks});
+  // };
+
   setCheckMark = (locationMark: number, checkedIndex: number) => {
-    const indexMarks = this.state.checkedIndexMarks.slice();
-    indexMarks[locationMark] = checkedIndex;
-    console.info('[indexMarks]', indexMarks);
-    this.setState({checkedIndexMarks: indexMarks});
+    this.cacheMarks[locationMark] = checkedIndex;
+    this.setMarkTimer && clearTimeout(this.setMarkTimer);
+    this.setMarkTimer = setTimeout(() => {
+      this.setState({checkedIndexMarks: [...this.cacheMarks]});
+    }, 200);
   };
 
   onConfirmClickProxy = () => {
@@ -43,7 +59,7 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
     for (let i = 0; i < value.length; i++) {
       const element = value[i];
       const wheelItems = data[i];
-      const findIndex = wheelItems.findIndex(ele => ele.id === element.id);
+      const findIndex = wheelItems.findIndex(ele => ele?.id === element?.id);
       initialCheckedIndexMarks.push(findIndex >= 0 ? findIndex : 0);
     }
     return initialCheckedIndexMarks;

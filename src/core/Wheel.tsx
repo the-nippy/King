@@ -31,6 +31,7 @@ type TEventHandler = NativeSyntheticEvent<NativeScrollEvent>;
 class Wheel extends Component<TWheelProps, TWheelState> {
   static defaultProps: TWheelProps;
   listRef: React.RefObject<FlatListComponent<any, any>>;
+  scrollTimer: ReturnType<typeof setTimeout> | null;
 
   state = {
     checkedIndex: 0,
@@ -39,21 +40,26 @@ class Wheel extends Component<TWheelProps, TWheelState> {
   constructor(props: any) {
     super(props);
     this.listRef = React.createRef();
+    this.scrollTimer = null;
   }
 
   componentDidMount(): void {
-    const {initialCheckedIndex} = this.props;
-    console.info('[initialCheckedIndex]', initialCheckedIndex);
+    const {initialCheckedIndex, rowLocationMark, setCheckMark} = this.props;
     if (initialCheckedIndex !== this.state.checkedIndex) {
-      setTimeout(() => {
+      this.scrollTimer = setTimeout(() => {
         this.listRef?.current?.scrollToIndex({
           index: initialCheckedIndex,
           animated: false,
           viewPosition: 0.5,
         });
-      }, 100);
+      }, 200);
       this.setState({checkedIndex: initialCheckedIndex});
+      setCheckMark(rowLocationMark, initialCheckedIndex);
     }
+  }
+
+  componentWillUnmount(): void {
+    this.scrollTimer && clearTimeout(this.scrollTimer);
   }
 
   adjustScroll = (event: TEventHandler) => {

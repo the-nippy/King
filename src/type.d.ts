@@ -1,10 +1,12 @@
 type IWheelItemProps = {
   label?: string | number;
   value?: string | number;
+  contents?: IWheelItemProps[] | null;
   id: string | number;
 };
 
 type IParallelItemsProps = IWheelItemProps[][];
+type ICascadeItemsProps = IWheelItemProps[];
 
 type SlidePickerType = {
   visible: boolean;
@@ -17,7 +19,7 @@ type SlidePickerType = {
   itemHeight?: number;
   checkedTextStyle?: TextStyle;
   normalTextStyle?: TextStyle;
-  data: IParallelItemsProps;
+  data: IParallelItemsProps | ICascadeItemsProps;
 
   titleText?: string;
   titleTextStyle?: TextStyle;

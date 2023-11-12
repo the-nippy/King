@@ -34,10 +34,15 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
   // };
 
   setCheckMark = (locationMark: number, checkedIndex: number) => {
+    const {wheels} = this.props;
     this.cacheMarks[locationMark] = checkedIndex;
     this.setMarkTimer && clearTimeout(this.setMarkTimer);
     this.setMarkTimer = setTimeout(() => {
-      this.setState({checkedIndexMarks: [...this.cacheMarks]});
+      const targetMarks = [...this.cacheMarks];
+      if (locationMark !== wheels - 1) {
+        targetMarks.fill(0, locationMark + 1);
+      }
+      this.setState({checkedIndexMarks: targetMarks});
     }, 200);
   };
 
@@ -72,7 +77,7 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
     console.info('checkedIndexMarks', checkedIndexMarks);
     let temp = data;
     const AllWheelItems = [temp];
-    for (let index = 1; index < wheels; index++) {
+    for (let index = 0; index < wheels; index++) {
       temp = (temp?.[checkedIndexMarks[index]] as IWheelItemProps)
         ?.contents as IWheelItemProps[];
       AllWheelItems.push(temp);

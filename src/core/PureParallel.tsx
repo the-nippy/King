@@ -19,7 +19,7 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
       checkedIndexMarks: new Array(wheels).fill(0),
     };
     this.setMarkTimer = null;
-    this.cacheMarks = [];
+    this.cacheMarks = new Array(wheels).fill(0);
   }
 
   componentWillUnmount(): void {
@@ -67,6 +67,9 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
 
   render() {
     const {wheels, data, value} = this.props;
+
+    console.info('checkedIndexMarks', this.state.checkedIndexMarks);
+
     const initialCheckedIndexMarks = this.getCheckMarksByValue();
 
     return (

@@ -3,6 +3,7 @@ import {StyleSheet, TouchableOpacity, View, Text} from 'react-native';
 import SlidePicker from '..';
 
 import PARALLEL_DATA from '../test_data/parallel.json';
+import CASCADE_DATA from '../test_data/cascade.json';
 
 export default class Demo extends Component {
   state = {demoType: '', timeData: []};
@@ -15,8 +16,10 @@ export default class Demo extends Component {
     return (
       <View style={styles.page}>
         <View>
-          <TouchableOpacity onPress={() => {}}>
-            <Text></Text>
+          <Text>Cascade</Text>
+          <TouchableOpacity
+            onPress={() => this.setState({demoType: 'cascade_area'})}>
+            <Text>Area</Text>
           </TouchableOpacity>
         </View>
         <View>
@@ -26,7 +29,7 @@ export default class Demo extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => this.setState({demoType: 'parallel_time'})}>
-            <Text>ABC</Text>
+            <Text>ABC / 123</Text>
           </TouchableOpacity>
         </View>
 
@@ -37,6 +40,18 @@ export default class Demo extends Component {
           wheels={2}
           checkRange={5}
           checkedTextStyle={styles.checkedStyle}
+          onCancelClick={() => this.setState({demoType: ''})}
+          onConfirmClick={res => {
+            console.info('[res]', res);
+            this.setState({timeData: res, demoType: ''});
+          }}
+        />
+
+        <SlidePicker.Cascade
+          visible={this.state.demoType === 'cascade_area'}
+          data={CASCADE_DATA}
+          value={[]}
+          wheels={3}
           onCancelClick={() => this.setState({demoType: ''})}
           onConfirmClick={res => {
             console.info('[res]', res);

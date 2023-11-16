@@ -64,8 +64,9 @@ class Wheel extends Component<TWheelProps, TWheelState> {
 
   manualSetChecked = (index: number) => {
     this.setState({checkedIndex: index});
+    console.info('[wheelItems]', this.props.wheelItems);
     this.listRef?.current?.scrollToIndex({
-      index: 0,
+      index: index,
       animated: true,
       viewPosition: 0.5,
     });
@@ -75,12 +76,15 @@ class Wheel extends Component<TWheelProps, TWheelState> {
     const {y} = event.nativeEvent.contentOffset;
     const {setCheckMark, rowLocationMark, itemHeight} = this.props;
     const adjustCheckedIndex = Math.round(y / itemHeight);
-    this.setState({checkedIndex: adjustCheckedIndex});
     this.listRef?.current?.scrollToIndex({
       index: adjustCheckedIndex,
       animated: true,
       viewPosition: 0.5,
     });
+    if (this.state.checkedIndex === adjustCheckedIndex) {
+      return;
+    }
+    this.setState({checkedIndex: adjustCheckedIndex});
     setCheckMark(rowLocationMark, adjustCheckedIndex);
   };
 

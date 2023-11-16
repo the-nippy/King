@@ -6,7 +6,7 @@ import PARALLEL_DATA from '../test_data/parallel.json';
 import CASCADE_DATA from '../test_data/cascade.json';
 
 export default class Demo extends Component {
-  state = {demoType: '', timeData: []};
+  state = {demoType: '', skuData: [], areaData: []};
 
   constructor(props: any) {
     super(props);
@@ -36,26 +36,26 @@ export default class Demo extends Component {
         <SlidePicker.Parallel
           visible={this.state.demoType === 'parallel_time'}
           data={PARALLEL_DATA}
-          value={this.state.timeData}
+          value={this.state.skuData}
           wheels={2}
           checkRange={5}
           checkedTextStyle={styles.checkedStyle}
           onCancelClick={() => this.setState({demoType: ''})}
           onConfirmClick={res => {
             console.info('[res]', res);
-            this.setState({timeData: res, demoType: ''});
+            this.setState({skuData: res, demoType: ''});
           }}
         />
 
         <SlidePicker.Cascade
           visible={this.state.demoType === 'cascade_area'}
           data={CASCADE_DATA}
-          value={[]}
+          value={this.state.areaData}
           wheels={3}
           onCancelClick={() => this.setState({demoType: ''})}
           onConfirmClick={res => {
             console.info('[res]', res);
-            this.setState({timeData: res, demoType: ''});
+            this.setState({areaData: res, demoType: ''});
           }}
         />
       </View>

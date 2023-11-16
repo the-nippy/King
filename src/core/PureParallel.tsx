@@ -47,7 +47,7 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
     const result = [];
     for (let i = 0; i < data.length; i++) {
       const checkedIndex = this.state.checkedIndexMarks[i];
-      const element = data[i][checkedIndex];
+      const element = (data as IParallelItemsProps)[i][checkedIndex];
       result.push(element);
     }
     onConfirmClick && onConfirmClick(result);
@@ -58,7 +58,7 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
     const initialCheckedIndexMarks = [];
     for (let i = 0; i < value.length; i++) {
       const element = value[i];
-      const wheelItems = data[i];
+      const wheelItems = (data as IParallelItemsProps)[i];
       const findIndex = wheelItems.findIndex(ele => ele?.id === element?.id);
       initialCheckedIndexMarks.push(findIndex >= 0 ? findIndex : 0);
     }
@@ -66,10 +66,9 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
   };
 
   render() {
-    const {wheels, data, value} = this.props;
+    const {wheels, data} = this.props;
 
-    console.info('checkedIndexMarks', this.state.checkedIndexMarks);
-
+    console.info('parallel-checkedIndexMarks', this.state.checkedIndexMarks);
     const initialCheckedIndexMarks = this.getCheckMarksByValue();
 
     return (
@@ -80,7 +79,7 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
             return (
               <Wheel
                 key={i}
-                wheelItems={data[i]}
+                wheelItems={(data as IParallelItemsProps)[i]}
                 rowLocationMark={i}
                 initialCheckedIndex={initialCheckedIndexMarks[i]}
                 setCheckMark={this.setCheckMark}

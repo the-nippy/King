@@ -62,6 +62,15 @@ class Wheel extends Component<TWheelProps, TWheelState> {
     this.scrollTimer && clearTimeout(this.scrollTimer);
   }
 
+  manualSetChecked = (index: number) => {
+    this.setState({checkedIndex: index});
+    this.listRef?.current?.scrollToIndex({
+      index: 0,
+      animated: true,
+      viewPosition: 0.5,
+    });
+  };
+
   adjustScroll = (event: TEventHandler) => {
     const {y} = event.nativeEvent.contentOffset;
     const {setCheckMark, rowLocationMark, itemHeight} = this.props;

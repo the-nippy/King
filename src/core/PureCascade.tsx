@@ -12,6 +12,7 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
   static defaultProps: SlidePickerType;
   setMarkTimer: ReturnType<typeof setTimeout> | null;
   cacheMarks: number[];
+  wheelRefs: any[];
   constructor(props: any) {
     super(props);
     const {wheels} = this.props;
@@ -19,22 +20,18 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
     this.state = {checkedIndexMarks: checkedMarks};
     this.setMarkTimer = null;
     this.cacheMarks = checkedMarks;
+    this.wheelRefs = checkedMarks.map(() => React.createRef());
   }
 
   componentWillUnmount(): void {
     this.setMarkTimer && clearTimeout(this.setMarkTimer);
   }
 
-  // setCheckMark = (locationMark: number, checkedIndex: number) => {
-  //   const indexMarks = [...this.state.checkedIndexMarks];
-  //   console.info('[slice indexMarks]', indexMarks);
-  //   indexMarks[locationMark] = checkedIndex;
-  //   console.info('[indexMarks]', indexMarks);
-  //   this.setState({checkedIndexMarks: indexMarks});
-  // };
-
   setCheckMark = (locationMark: number, checkedIndex: number) => {
     const {wheels} = this.props;
+    if (this.state.checkedIndexMarks[locationMark] === checkedIndex) {
+      return;
+    }
     this.cacheMarks[locationMark] = checkedIndex;
     this.setMarkTimer && clearTimeout(this.setMarkTimer);
     this.setMarkTimer = setTimeout(() => {
@@ -43,6 +40,10 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
         targetMarks.fill(0, locationMark + 1);
       }
       this.setState({checkedIndexMarks: targetMarks});
+      if (locationMark !== wheels - 1) {
+        const refs = this.wheelRefs.slice(locationMark + 1);
+        refs.forEach(ele => ele?.current?.manualSetChecked(0));
+      }
     }, 200);
   };
 
@@ -99,6 +100,7 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
             return (
               <Wheel
                 key={i}
+                ref={this.wheelRefs[i]}
                 wheelItems={AllWheelItems[i]}
                 rowLocationMark={i}
                 // initialCheckedIndex={initialCheckedIndexMarks[i]}

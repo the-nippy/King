@@ -11,36 +11,48 @@ interface IParallelState {
 class PureParallel extends Component<SlidePickerType, IParallelState> {
   static defaultProps: SlidePickerType;
   setMarkTimer: ReturnType<typeof setTimeout> | null;
-  cacheMarks: number[];
+  // cacheMarks: number[];
+  wheelRefs: any[];
+
   constructor(props: any) {
     super(props);
     const {wheels} = this.props;
-    this.state = {
-      checkedIndexMarks: new Array(wheels).fill(0),
-    };
+    const initialCheckMarks = new Array(wheels).fill(0);
+    this.state = {checkedIndexMarks: initialCheckMarks};
     this.setMarkTimer = null;
-    this.cacheMarks = new Array(wheels).fill(0);
+    // this.cacheMarks = new Array(wheels).fill(0);
+    this.wheelRefs = initialCheckMarks.map(() => React.createRef());
+  }
+
+  componentDidMount(): void {
+    const {value, wheels} = this.props;
+    if (value && value.length === wheels) {
+      const initialCheckedIndexMarks = this.getCheckMarksByValue();
+      this.setState({checkedIndexMarks: initialCheckedIndexMarks}, () => {
+        this.wheelRefs.forEach((ele, i) => {
+          ele.current.manualSetChecked(initialCheckedIndexMarks[i], false);
+        });
+      });
+    }
   }
 
   componentWillUnmount(): void {
     this.setMarkTimer && clearTimeout(this.setMarkTimer);
   }
 
-  // setCheckMark = (locationMark: number, checkedIndex: number) => {
-  //   const indexMarks = [...this.state.checkedIndexMarks];
-  //   console.info('[slice indexMarks]', indexMarks);
-  //   indexMarks[locationMark] = checkedIndex;
-  //   console.info('[indexMarks]', indexMarks);
-  //   this.setState({checkedIndexMarks: indexMarks});
-  // };
-
   setCheckMark = (locationMark: number, checkedIndex: number) => {
-    this.cacheMarks[locationMark] = checkedIndex;
-    this.setMarkTimer && clearTimeout(this.setMarkTimer);
-    this.setMarkTimer = setTimeout(() => {
-      this.setState({checkedIndexMarks: [...this.cacheMarks]});
-    }, 200);
+    const indexMarks = [...this.state.checkedIndexMarks];
+    indexMarks[locationMark] = checkedIndex;
+    this.setState({checkedIndexMarks: indexMarks});
   };
+
+  // setCheckMark = (locationMark: number, checkedIndex: number) => {
+  //   this.cacheMarks[locationMark] = checkedIndex;
+  //   this.setMarkTimer && clearTimeout(this.setMarkTimer);
+  //   this.setMarkTimer = setTimeout(() => {
+  //     this.setState({checkedIndexMarks: [...this.cacheMarks]});
+  //   }, 200);
+  // };
 
   onConfirmClickProxy = () => {
     const {onConfirmClick, data} = this.props;
@@ -68,9 +80,6 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
   render() {
     const {wheels, data} = this.props;
 
-    console.info('parallel-checkedIndexMarks', this.state.checkedIndexMarks);
-    const initialCheckedIndexMarks = this.getCheckMarksByValue();
-
     return (
       <View>
         <Header {...this.props} onConfirmClick={this.onConfirmClickProxy} />
@@ -79,9 +88,9 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
             return (
               <Wheel
                 key={i}
+                ref={this.wheelRefs[i]}
                 wheelItems={(data as IParallelItemsProps)[i]}
                 rowLocationMark={i}
-                initialCheckedIndex={initialCheckedIndexMarks[i]}
                 setCheckMark={this.setCheckMark}
                 {...this.props}
               />

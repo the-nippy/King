@@ -18,7 +18,6 @@ type TWheelProps = {
   checkedTextStyle: TextStyle;
   normalTextStyle: TextStyle;
   rowLocationMark: number; //
-  initialCheckedIndex: number;
   setCheckMark: (rowLocationMark: number, checkedIndex: number) => void;
 };
 
@@ -43,32 +42,19 @@ class Wheel extends Component<TWheelProps, TWheelState> {
     this.scrollTimer = null;
   }
 
-  componentDidMount(): void {
-    const {initialCheckedIndex, rowLocationMark, setCheckMark} = this.props;
-    if (initialCheckedIndex !== this.state.checkedIndex) {
-      this.scrollTimer = setTimeout(() => {
-        this.listRef?.current?.scrollToIndex({
-          index: initialCheckedIndex,
-          animated: false,
-          viewPosition: 0.5,
-        });
-      }, 200);
-      this.setState({checkedIndex: initialCheckedIndex});
-      setCheckMark(rowLocationMark, initialCheckedIndex);
-    }
-  }
-
   componentWillUnmount(): void {
     this.scrollTimer && clearTimeout(this.scrollTimer);
   }
 
-  manualSetChecked = (index: number) => {
-    this.setState({checkedIndex: index});
-    console.info('[wheelItems]', this.props.wheelItems);
-    this.listRef?.current?.scrollToIndex({
-      index: index,
-      animated: true,
-      viewPosition: 0.5,
+  manualSetChecked = (index: number, animated: boolean) => {
+    this.setState({checkedIndex: index}, () => {
+      this.scrollTimer = setTimeout(() => {
+        this.listRef?.current?.scrollToIndex({
+          index: index,
+          animated,
+          viewPosition: 0.5,
+        });
+      }, 100);
     });
   };
 
@@ -153,7 +139,6 @@ Wheel.defaultProps = {
   normalTextStyle: {},
   rowLocationMark: 0,
   setCheckMark: () => {},
-  initialCheckedIndex: 0,
 };
 
 export default Wheel;

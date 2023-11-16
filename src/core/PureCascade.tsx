@@ -13,6 +13,7 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
   setMarkTimer: ReturnType<typeof setTimeout> | null;
   cacheMarks: number[];
   wheelRefs: any[];
+
   constructor(props: any) {
     super(props);
     const {wheels} = this.props;
@@ -21,6 +22,18 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
     this.setMarkTimer = null;
     this.cacheMarks = checkedMarks;
     this.wheelRefs = checkedMarks.map(() => React.createRef());
+  }
+
+  componentDidMount(): void {
+    const {value, wheels} = this.props;
+    if (value && value.length === wheels) {
+      const initialCheckedIndexMarks = this.getCheckMarksByValue();
+      this.setState({checkedIndexMarks: initialCheckedIndexMarks}, () => {
+        this.wheelRefs.forEach((ele, i) => {
+          ele.current.manualSetChecked(initialCheckedIndexMarks[i], false);
+        });
+      });
+    }
   }
 
   componentWillUnmount(): void {
@@ -39,7 +52,7 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
       this.setState({checkedIndexMarks: targetMarks});
       if (locationMark !== wheels - 1) {
         const refs = this.wheelRefs.slice(locationMark + 1);
-        refs.forEach(ele => ele?.current?.manualSetChecked(0));
+        refs.forEach(ele => ele?.current?.manualSetChecked(0, true));
       }
     }, 200);
   };
@@ -50,9 +63,9 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
     let temp = data as ICascadeItemsProps;
     for (let i = 0; i < wheels; i++) {
       const checkedIndex = this.state.checkedIndexMarks[i];
-      const wheelData = temp[checkedIndex];
+      const wheelData = {...temp[checkedIndex]};
       if (wheelData) {
-        temp = [...(wheelData.contents || [])];
+        temp = wheelData.contents || [];
         delete wheelData.contents;
         result.push(wheelData);
       }
@@ -63,19 +76,11 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
   getCheckMarksByValue = () => {
     const {value, data} = this.props;
     const initialCheckedIndexMarks = [];
-    // for (let i = 0; i < value.length; i++) {
-    //   const element = value[i];
-    //   const wheelItems = data[i];
-    //   const findIndex = (wheelItems as IWheelItemProps[]).findIndex(
-    //     ele => ele?.id === element?.id,
-    //   );
-    //   initialCheckedIndexMarks.push(findIndex >= 0 ? findIndex : 0);
-    // }
-    // return initialCheckedIndexMarks;
     let temp = data as ICascadeItemsProps;
     for (let i = 0; i < value.length; i++) {
       const element = value[i];
       if (temp && temp.length > 0) {
+        // console.info('[temp]', JSON.stringify(temp));
         const index = temp.findIndex(ele => ele.id === element.id);
         initialCheckedIndexMarks.push(index);
         temp = temp[index].contents || [];
@@ -98,9 +103,7 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
   };
 
   render() {
-    const {wheels, data, value} = this.props;
-    const initialCheckedIndexMarks = this.getCheckMarksByValue();
-    console.info('cas-initialCheckedIndexMarks', initialCheckedIndexMarks);
+    const {wheels} = this.props;
 
     const AllWheelItems = this.getWheelItemsData();
 
@@ -115,7 +118,6 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
                 ref={this.wheelRefs[i]}
                 wheelItems={AllWheelItems[i]}
                 rowLocationMark={i}
-                // initialCheckedIndex={initialCheckedIndexMarks[i]}
                 setCheckMark={this.setCheckMark}
                 {...this.props}
               />

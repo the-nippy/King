@@ -8,18 +8,25 @@ type IWheelItemProps = {
 type IParallelItemsProps = IWheelItemProps[][];
 type ICascadeItemsProps = IWheelItemProps[];
 
+type IPickerValueProps = Omit<IWheelItemProps, 'contents'>;
+
 type SlidePickerType = {
   visible: boolean;
   wheels: number;
   value: IWheelItemProp[];
+  data: IParallelItemsProps | ICascadeItemsProps;
+
+  closeOnMaskClick?: boolean;
 
   animationDuration?: number;
 
-  checkRange?: number;
+  checkRange?: 3 | 5 | 7;
   itemHeight?: number;
+
+  contentBackgroundColor?: string;
+  itemDividerColor?: string;
   checkedTextStyle?: TextStyle;
   normalTextStyle?: TextStyle;
-  data: IParallelItemsProps | ICascadeItemsProps;
 
   titleText?: string;
   titleTextStyle?: TextStyle;

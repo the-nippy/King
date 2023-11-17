@@ -19,6 +19,8 @@ type TWheelProps = {
   normalTextStyle: TextStyle;
   rowLocationMark: number; //
   setCheckMark: (rowLocationMark: number, checkedIndex: number) => void;
+  contentBackgroundColor: string;
+  itemDividerColor: string;
 };
 
 type TWheelState = {
@@ -93,7 +95,13 @@ class Wheel extends Component<TWheelProps, TWheelState> {
   };
 
   render() {
-    const {checkRange, itemHeight, wheelItems} = this.props;
+    const {
+      checkRange,
+      itemHeight,
+      wheelItems,
+      contentBackgroundColor,
+      itemDividerColor,
+    } = this.props;
 
     const fillCount = (checkRange - 1) / 2;
     const fillPadding = fillCount * itemHeight;
@@ -106,7 +114,18 @@ class Wheel extends Component<TWheelProps, TWheelState> {
       <View style={{flex: 1, height: itemHeight * checkRange}}>
         <View style={styles.base}>
           {new Array(checkRange).fill(1).map((ele, i) => (
-            <View style={[styles.fakeItem, {height: itemHeight}]} key={i} />
+            <View
+              style={[
+                styles.fakeItem,
+                {
+                  height: itemHeight,
+                  backgroundColor: contentBackgroundColor,
+                  borderTopColor:
+                    i === 0 ? 'rgba(0,0,0,0.05)' : itemDividerColor,
+                },
+              ]}
+              key={i}
+            />
           ))}
         </View>
         <View style={styles.maskList}>
@@ -139,6 +158,8 @@ Wheel.defaultProps = {
   normalTextStyle: {},
   rowLocationMark: 0,
   setCheckMark: () => {},
+  contentBackgroundColor: '#f8f8f8',
+  itemDividerColor: 'rgba(0,0,0,0.05)',
 };
 
 export default Wheel;
@@ -156,7 +177,6 @@ const styles = StyleSheet.create({
   fakeItem: {
     flex: 1,
     backgroundColor: '#f8f8f8',
-    borderTopColor: 'rgba(0,0,0,0.05)',
     borderTopWidth: 1,
   },
   maskList: {

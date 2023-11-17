@@ -49,7 +49,11 @@ class Wheel extends Component<TWheelProps, TWheelState> {
   }
 
   manualSetChecked = (index: number, animated: boolean) => {
+    const {wheelItems} = this.props;
     this.setState({checkedIndex: index}, () => {
+      if (!wheelItems || wheelItems.length === 0) {
+        return;
+      }
       this.scrollTimer = setTimeout(() => {
         this.listRef?.current?.scrollToIndex({
           index: index,
@@ -89,7 +93,9 @@ class Wheel extends Component<TWheelProps, TWheelState> {
 
     return (
       <TouchableOpacity style={[styles.item, {height: itemHeight}]}>
-        <Text style={customTextStyle}>{item.label}</Text>
+        <Text style={customTextStyle} numberOfLines={1}>
+          {item.label}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -136,7 +142,7 @@ class Wheel extends Component<TWheelProps, TWheelState> {
             renderItem={this.renderItem}
             onMomentumScrollEnd={this.adjustScroll}
             pinchGestureEnabled={false}
-            keyExtractor={data => data.id.toString()}
+            keyExtractor={data => data.value.toString()}
             showsVerticalScrollIndicator={false}
             getItemLayout={(data, index) => ({
               length: itemHeight,

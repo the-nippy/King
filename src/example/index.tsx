@@ -1,15 +1,22 @@
 import React, {Component, PropsWithChildren} from 'react';
-import {StyleSheet, TouchableOpacity, View, Text} from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  Pressable,
+} from 'react-native';
 import SlidePicker from '..';
 
-import PARALLEL_DATA from '../test_data/parallel.json';
-import CASCADE_DATA from '../test_data/cascade.json';
+import CASCADE_POSITION from '../test_data/cascade_position.json';
 import PARALLEL_TIME from '../test_data/parallel_time.json';
 import PARALLEL_SKU from '../test_data/parallel_sku.json';
+import ICON_DOG from '../example/dog.png';
 
 type IExampleState = {
   skuData: IPickerValueProps[];
-  areaData: IPickerValueProps[];
+  positionData: IPickerValueProps[];
   timeData: IPickerValueProps[];
   demoType: string;
 };
@@ -21,12 +28,12 @@ export default class Demo extends Component<PropsWithChildren, IExampleState> {
       demoType: '',
       timeData: [],
       skuData: [],
-      areaData: [],
+      positionData: [],
     };
   }
 
   render() {
-    const {areaData, skuData, timeData} = this.state;
+    const {positionData, skuData, timeData} = this.state;
 
     return (
       <View style={styles.page}>
@@ -34,10 +41,13 @@ export default class Demo extends Component<PropsWithChildren, IExampleState> {
           <Text style={styles.title}>Cascade</Text>
           <TouchableOpacity
             style={styles.item}
-            onPress={() => this.setState({demoType: 'cascade_area'})}>
-            <Text style={styles.name}>Area</Text>
+            onPress={() => this.setState({demoType: 'cascade_position'})}>
+            <Text style={styles.name}>position</Text>
             <Text style={styles.values}>
-              {areaData.map(ele => ele.label).join(',')}
+              {[...positionData]
+                .reverse()
+                .map(ele => ele.label)
+                .join(',')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -64,25 +74,32 @@ export default class Demo extends Component<PropsWithChildren, IExampleState> {
         </View>
 
         <SlidePicker.Cascade
-          visible={this.state.demoType === 'cascade_area'}
-          data={CASCADE_DATA}
-          value={this.state.areaData}
-          wheels={3}
-          itemDividerColor={'#a00'}
+          visible={this.state.demoType === 'cascade_position'}
+          data={CASCADE_POSITION}
+          values={this.state.positionData}
+          wheels={4}
+          checkRange={5}
+          itemDividerColor={'#ddd'}
+          checkedTextStyle={{fontSize: 15}}
+          itemHeight={44}
+          animationDuration={300}
+          titleText={'Position'}
+          cancelTextStyle={styles.cancelTextStyle}
+          onMaskClick={() => this.setState({demoType: ''})}
           onCancelClick={() => this.setState({demoType: ''})}
           onConfirmClick={res => {
             console.info('[res]', res);
-            this.setState({areaData: res, demoType: ''});
+            this.setState({positionData: res, demoType: ''});
           }}
         />
 
         <SlidePicker.Parallel
           visible={this.state.demoType === 'parallel_time'}
           data={PARALLEL_TIME}
-          value={this.state.timeData}
+          values={this.state.timeData}
           wheels={2}
-          checkRange={5}
           checkedTextStyle={styles.checkedStyle}
+          normalTextStyle={{fontSize: 14}}
           onCancelClick={() => this.setState({demoType: ''})}
           onConfirmClick={res => {
             console.info('[res]', res);
@@ -93,15 +110,21 @@ export default class Demo extends Component<PropsWithChildren, IExampleState> {
         <SlidePicker.Parallel
           visible={this.state.demoType === 'parallel_sku'}
           data={PARALLEL_SKU}
-          value={this.state.skuData}
+          values={this.state.skuData}
           wheels={3}
-          checkRange={3}
           checkedTextStyle={styles.checkedStyle}
-          onCancelClick={() => this.setState({demoType: ''})}
-          onConfirmClick={res => {
-            console.info('[res]', res);
-            this.setState({skuData: res, demoType: ''});
-          }}
+          onMaskClick={() => this.setState({demoType: ''})}
+          HeaderComponent={
+            <View style={styles.header}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Image source={ICON_DOG} style={{width: 34, height: 34}} />
+                <Text style={{marginLeft: 10}}>What you want?</Text>
+              </View>
+              <TouchableOpacity onPress={() => {}}>
+                <Text style={{fontWeight: '700'}}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          }
         />
       </View>
     );
@@ -140,5 +163,16 @@ const styles = StyleSheet.create({
   },
   checkedStyle: {
     color: '#a00',
+  },
+  cancelTextStyle: {
+    color: '#a00',
+  },
+  header: {
+    backgroundColor: '#fff',
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
   },
 });

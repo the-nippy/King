@@ -5,6 +5,7 @@ import {
   Animated,
   Dimensions,
   LayoutChangeEvent,
+  Pressable,
 } from 'react-native';
 
 export function withMask(
@@ -60,8 +61,13 @@ export function withMask(
         return null;
       }
 
+      const {onMaskClick} = this.props;
+
       return (
         <View style={styles.mask}>
+          <Pressable
+            style={{flex: 1}}
+            onPress={() => onMaskClick && onMaskClick()}></Pressable>
           <Animated.View
             style={[
               {

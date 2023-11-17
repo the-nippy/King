@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
 import Wheel from './Wheel';
-import ParallelTestData from '../test_data/parallel.json';
 import Header from './Header';
 
 interface IParallelState {
@@ -25,12 +24,12 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
   }
 
   componentDidMount(): void {
-    const {value, wheels} = this.props;
-    if (value && value.length === wheels) {
-      const initialCheckedIndexMarks = this.getCheckMarksByValue();
+    const {values, wheels} = this.props;
+    if (values && values.length === wheels) {
+      const initialCheckedIndexMarks = this.getCheckMarksByValues();
       this.setState({checkedIndexMarks: initialCheckedIndexMarks}, () => {
         this.wheelRefs.forEach((ele, i) => {
-          ele.current.manualSetChecked(initialCheckedIndexMarks[i], false);
+          ele?.current?.manualSetChecked(initialCheckedIndexMarks[i], false);
         });
       });
     }
@@ -54,27 +53,41 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
   //   }, 200);
   // };
 
-  onConfirmClickProxy = () => {
-    const {onConfirmClick, data} = this.props;
+  getValuesByCheckMarks = () => {
+    const {data} = this.props;
     const result = [];
     for (let i = 0; i < data.length; i++) {
       const checkedIndex = this.state.checkedIndexMarks[i];
       const element = (data as IParallelItemsProps)[i][checkedIndex];
       result.push(element);
     }
-    onConfirmClick && onConfirmClick(result);
+    return result;
   };
 
-  getCheckMarksByValue = () => {
-    const {value, data} = this.props;
+  getCheckMarksByValues = () => {
+    const {values, data} = this.props;
     const initialCheckedIndexMarks = [];
-    for (let i = 0; i < value.length; i++) {
-      const element = value[i];
+    for (let i = 0; i < values.length; i++) {
+      const element = values[i];
       const wheelItems = (data as IParallelItemsProps)[i];
-      const findIndex = wheelItems.findIndex(ele => ele?.id === element?.id);
+      const findIndex = wheelItems.findIndex(
+        ele => ele?.value === element?.value,
+      );
       initialCheckedIndexMarks.push(findIndex >= 0 ? findIndex : 0);
     }
     return initialCheckedIndexMarks;
+  };
+
+  onConfirmClickProxy = () => {
+    const {onConfirmClick, data} = this.props;
+    const result = this.getValuesByCheckMarks();
+    onConfirmClick && onConfirmClick(result);
+  };
+
+  // ref
+  _getValues = () => {
+    const result = this.getValuesByCheckMarks();
+    return result;
   };
 
   render() {
@@ -106,7 +119,7 @@ PureParallel.defaultProps = {
   visible: false,
   wheels: 2,
   checkRange: 3,
-  data: ParallelTestData,
+  data: [],
   itemHeight: 50,
   value: [],
 };

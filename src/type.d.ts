@@ -1,22 +1,21 @@
 type IWheelItemProps = {
-  label?: string | number;
-  value?: string | number;
-  contents?: IWheelItemProps[] | null;
-  id: string | number;
+  label: string | number;
+  value: string | number;
+  options?: IWheelItemProps[] | null;
 };
 
 type IParallelItemsProps = IWheelItemProps[][];
 type ICascadeItemsProps = IWheelItemProps[];
 
-type IPickerValueProps = Omit<IWheelItemProps, 'contents'>;
+type IPickerValueProps = Omit<IWheelItemProps, 'options'>;
 
 type SlidePickerType = {
   visible: boolean;
   wheels: number;
-  value: IWheelItemProp[];
+  values: IWheelItemProp[];
   data: IParallelItemsProps | ICascadeItemsProps;
 
-  closeOnMaskClick?: boolean;
+  onMaskClick?: () => void;
 
   animationDuration?: number;
 

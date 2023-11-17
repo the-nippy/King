@@ -7,12 +7,12 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import SlidePicker from '..';
+import SlidePicker from '../src';
 
-import CASCADE_POSITION from '../test_data/cascade_position.json';
-import PARALLEL_TIME from '../test_data/parallel_time.json';
-import PARALLEL_SKU from '../test_data/parallel_sku.json';
-import ICON_DOG from '../example/dog.png';
+import CASCADE_POSITION from './test_data/cascade_position.json';
+import PARALLEL_TIME from './test_data/parallel_time.json';
+import PARALLEL_SKU from './test_data/parallel_sku.json';
+import ICON_DOG from './dog.png';
 
 type IExampleState = {
   skuData: IPickerValueProps[];

@@ -85,10 +85,7 @@ class PureParallel extends Component<SlidePickerType, IParallelState> {
   };
 
   // ref
-  _getValues = () => {
-    const result = this.getValuesByCheckMarks();
-    return result;
-  };
+  _getValues = () => this.getValuesByCheckMarks();
 
   render() {
     const {wheels, data} = this.props;

@@ -95,10 +95,7 @@ class PureCascade extends Component<SlidePickerType, IParallelState> {
   };
 
   // ref
-  _getValues = () => {
-    const result = this.getValuesByCheckMarks();
-    return result;
-  };
+  _getValues = () => this.getValuesByCheckMarks();
 
   getWheelItemsData = () => {
     const {data, wheels} = this.props;

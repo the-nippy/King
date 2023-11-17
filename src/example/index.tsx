@@ -22,6 +22,8 @@ type IExampleState = {
 };
 
 export default class Demo extends Component<PropsWithChildren, IExampleState> {
+  skuRef: React.RefObject<any>;
+
   constructor(props: any) {
     super(props);
     this.state = {
@@ -30,6 +32,7 @@ export default class Demo extends Component<PropsWithChildren, IExampleState> {
       skuData: [],
       positionData: [],
     };
+    this.skuRef = React.createRef();
   }
 
   render() {
@@ -108,6 +111,7 @@ export default class Demo extends Component<PropsWithChildren, IExampleState> {
         />
 
         <SlidePicker.Parallel
+          ref={this.skuRef}
           visible={this.state.demoType === 'parallel_sku'}
           data={PARALLEL_SKU}
           values={this.state.skuData}
@@ -120,7 +124,12 @@ export default class Demo extends Component<PropsWithChildren, IExampleState> {
                 <Image source={ICON_DOG} style={{width: 34, height: 34}} />
                 <Text style={{marginLeft: 10}}>What you want?</Text>
               </View>
-              <TouchableOpacity onPress={() => {}}>
+              <TouchableOpacity
+                onPress={() => {
+                  const res = this.skuRef?.current?._getValues();
+                  console.info('res', res);
+                  this.setState({skuData: res, demoType: ''});
+                }}>
                 <Text style={{fontWeight: '700'}}>Done</Text>
               </TouchableOpacity>
             </View>

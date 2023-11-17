@@ -8,20 +8,26 @@ import {
   Pressable,
 } from 'react-native';
 
+type IMaskSlidePickerType = SlidePickerType & {
+  ref?: React.RefObject<any>;
+};
+
 export function withMask(
-  WrappedComponent: React.ComponentType<SlidePickerType>,
+  WrappedComponent: React.ComponentType<IMaskSlidePickerType>,
 ) {
-  return class Mask extends Component<SlidePickerType> {
+  return class Mask extends Component<IMaskSlidePickerType> {
     animationDuration: number;
 
     aniTransValue = new Animated.Value(0);
     pickerHeight = 0;
     SCREEN_HEIGHT = Dimensions.get('window').height;
     state = {mount: false};
+    wrappedCompRef: React.RefObject<any>;
 
     constructor(props: any) {
       super(props);
       this.animationDuration = this.props.animationDuration || 200;
+      this.wrappedCompRef = React.createRef();
     }
 
     componentDidUpdate(prevProps: Readonly<SlidePickerType>): void {
@@ -56,6 +62,10 @@ export function withMask(
       this.show();
     };
 
+    _getValues = () => {
+      return this.wrappedCompRef?.current?._getValues();
+    };
+
     render() {
       if (!this.state.mount) {
         return null;
@@ -77,7 +87,10 @@ export function withMask(
               styles.content,
             ]}
             onLayout={this.onContentLayout}>
-            <WrappedComponent {...(this.props as SlidePickerType)} />
+            <WrappedComponent
+              {...(this.props as SlidePickerType)}
+              ref={this.wrappedCompRef}
+            />
           </Animated.View>
         </View>
       );

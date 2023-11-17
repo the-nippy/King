@@ -12,7 +12,7 @@ type IPickerValueProps = Omit<IWheelItemProps, 'options'>;
 type SlidePickerType = {
   visible: boolean;
   wheels: number;
-  values: IWheelItemProp[];
+  values: IWheelItemProps[];
   data: IParallelItemsProps | ICascadeItemsProps;
 
   onMaskClick?: () => void;

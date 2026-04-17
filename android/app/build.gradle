@@ -101,6 +101,12 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    packagingOptions {
+        jniLibs {
+            // 强制压缩 .so 文件，绕过对齐检查
+            useLegacyPackaging = true
+        }
+    }
 }
 
 dependencies {
